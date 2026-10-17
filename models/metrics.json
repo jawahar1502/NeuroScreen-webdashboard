@@ -1,0 +1,83 @@
+{
+  "cv_accuracy_mean": 0.71,
+  "cv_accuracy_std": 0.14882876066137218,
+  "accuracy": 0.7,
+  "auc": 0.8775000000000001,
+  "f1": 0.6666666666666666,
+  "confusion": {
+    "tn": 16,
+    "fp": 4,
+    "fn": 8,
+    "tp": 12
+  },
+  "n_subjects": 40,
+  "cv_folds": 5,
+  "cv_repeats": 5,
+  "demo": true,
+  "data_note": "SYNTHETIC demo data. Replace with real EEG and retrain.",
+  "top_features": [
+    {
+      "name": "theta_beta_ratio_frontal",
+      "importance": 0.12402105008462937
+    },
+    {
+      "name": "alpha_asym_F4-F3",
+      "importance": 0.058141897616352904
+    },
+    {
+      "name": "beta_F8",
+      "importance": 0.04693558702906602
+    },
+    {
+      "name": "theta_F3",
+      "importance": 0.03847887938609949
+    },
+    {
+      "name": "beta_F4",
+      "importance": 0.036444073675926676
+    },
+    {
+      "name": "theta_Fp2",
+      "importance": 0.027405038508679293
+    },
+    {
+      "name": "alpha_F3",
+      "importance": 0.026162615041261685
+    },
+    {
+      "name": "alpha_asym_F8-F7",
+      "importance": 0.024403422456676472
+    },
+    {
+      "name": "alpha_C3",
+      "importance": 0.022586707324974867
+    },
+    {
+      "name": "gamma_F8",
+      "importance": 0.02043440893136331
+    }
+  ],
+  "reference": {
+    "bands": [
+      "delta",
+      "theta",
+      "alpha",
+      "beta",
+      "gamma"
+    ],
+    "healthy": [
+      0.20250219127383717,
+      0.18085051968818827,
+      0.37248292523747495,
+      0.18515764279363323,
+      0.059006721006865964
+    ],
+    "mdd": [
+      0.19429801187932438,
+      0.19749694235196896,
+      0.37681966886369644,
+      0.17450460099452972,
+      0.0568807759104807
+    ]
+  }
+}

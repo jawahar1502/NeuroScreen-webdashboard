@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NeuroScreen EEG</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 38 38'%3E%3Crect width='38' height='38' rx='10' fill='%230e7c86'/%3E%3Cpath d='M16 9h6v7h7v6h-7v7h-6v-7H9v-6h7z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="shell">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <svg width="38" height="38" viewBox="0 0 38 38" aria-hidden="true"><rect width="38" height="38" rx="10" fill="#0e7c86"/><path d="M16 9h6v7h7v6h-7v7h-6v-7H9v-6h7z" fill="#fff"/></svg>
+      <div><b>NeuroScreen</b><small>EEG clinic suite</small></div>
+    </div>
+    <nav aria-label="Sections">
+      <a href="#analysis" class="on"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>Analysis</a>
+      <a href="#findings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 2h6v4H9zM6 5H5a1 1 0 00-1 1v15a1 1 0 001 1h14a1 1 0 001-1V6a1 1 0 00-1-1h-1M8 12h8M8 16h5"/></svg>Findings</a>
+      <a href="#signals"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M6 12l3-3 3 4 3-5 3 4"/></svg>Signals</a>
+      <a href="#model"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>Model quality</a>
+    </nav>
+    <div class="side-foot">Decision support only. Not a diagnostic device.</div>
+  </aside>
+
+  <main>
+    <header class="topbar">
+      <div>
+        <h1>Depression screening from resting EEG <span id="demoBadge" class="demo-badge" hidden title="Running on synthetic data">Demo</span></h1>
+        <p>Band power and frontal asymmetry, classified per recording</p>
+      </div>
+      <button class="btn primary" id="printBtn" type="button">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4a1 1 0 01-1-1v-6a1 1 0 011-1h16a1 1 0 011 1v6a1 1 0 01-1 1h-2M6 14h12v7H6z"/></svg>
+        Print report
+      </button>
+    </header>
+
+    <div id="demoBanner" class="demo-banner" role="note" hidden>
+      <strong>Demo mode.</strong>
+      <span id="demoNote">This dashboard is running on synthetic EEG data, so results are for testing only.</span>
+      <span>It is not a clinical diagnostic tool.</span>
+    </div>
+
+    <div class="print-head" id="printHead" aria-hidden="true"></div>
+
+    <div class="content">
+
+      <section class="card s12 patient" id="analysis" aria-label="Patient details">
+        <div class="avatar" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg></div>
+        <div class="field"><label for="pname">Patient name</label><input id="pname" placeholder="Full name" autocomplete="off"></div>
+        <div class="field"><label for="pid">Patient ID</label><input id="pid" placeholder="e.g. MRN-20418" autocomplete="off"></div>
+        <div class="field"><label for="page">Age</label><input id="page" type="number" min="0" max="120" placeholder="Years"></div>
+        <div class="field"><label for="psex">Sex</label>
+          <select id="psex"><option value="">Select</option><option>Female</option><option>Male</option><option>Other</option></select>
+        </div>
+        <div class="studydate">Study date<b id="sdate"></b></div>
+      </section>
+
+      <section class="card s5 upload-card" aria-label="Upload recording">
+        <h2>Upload recording</h2>
+        <p class="hint">Patient details stay in your browser. Only the EEG file is sent for analysis.</p>
+        <label class="drop" id="drop">
+          <input type="file" id="file" accept=".npy,.csv" hidden>
+          <svg viewBox="0 0 24 24" width="34" height="34" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg>
+          <div><strong>Choose an EEG file</strong> or drop it here</div>
+          <small>.npy (19 channels by samples) or .csv (samples by 19 channels), 250 Hz, 10-20 montage</small>
+        </label>
+        <div class="row demo-row" id="demoRow" hidden>
+          <button class="btn" id="demoHealthy" type="button">Load healthy sample</button>
+          <button class="btn" id="demoMdd" type="button">Load MDD sample</button>
+        </div>
+        <div class="err" id="err" role="alert"></div>
+      </section>
+
+      <section class="card s7" id="findings" aria-label="Screening result">
+        <h2>Screening result</h2>
+        <p class="hint">Average of all 4-second windows in the recording</p>
+        <div id="pred"></div>
+      </section>
+
+      <section class="card s12"><h2>Band power report</h2>
+        <p class="hint">Mean relative power across all channels, compared with the reference groups from the training data</p>
+        <div id="labtable"></div>
+      </section>
+
+      <section class="card s6" id="signals"><h2>Relative band power</h2><p class="hint">This recording against both reference groups</p><div id="bands"></div></section>
+      <section class="card s6"><h2>Probability across the recording</h2><p class="hint">One point per window. Values above 0.5 lean MDD-like.</p><div id="epochs"></div></section>
+
+      <section class="card s7"><h2>EEG trace</h2><p class="hint">First 5 seconds after filtering, four frontal channels</p><div id="trace"></div></section>
+      <section class="card s5"><h2>Channel map</h2><p class="hint">Relative power per channel and band</p><div id="heat"></div></section>
+
+      <section class="card s6" id="model"><h2>Model quality</h2><p class="hint">Evaluated on subjects the model never saw during training</p><div id="metrics"></div></section>
+      <section class="card s6"><h2>Features the model relies on most</h2><p class="hint">Higher bars carry more weight in the decision</p><div id="feats"></div></section>
+
+    </div>
+    <footer>Screening output reflects EEG patterns only. It cannot replace a clinical interview or a clinician's judgement.</footer>
+  </main>
+</div>
+<script src="/script.js"></script>
+</body>
+</html>
